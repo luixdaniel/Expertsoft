@@ -178,6 +178,80 @@ app.delete('/ainvoice/:id', async (req, res) => {
     }
 });
 
+// Consultas avanzadas 
+
+// total paid by each client
+app.get('/report/total-paid', async (req, res) => {
+    try {
+        const [rows] = await pool.query(`
+            SELECT 
+                u.id_user,
+                u.name_user,
+                SUM(i.amount_paid) AS total_paid
+            FROM users u
+            INNER JOIN transactions t ON u.id_user = t.id_user
+            INNER JOIN invoice i ON t.id_transaction = i.id_transaction
+            GROUP BY u.id_user, u.name_user
+        `);
+        res.json(rows);
+    } catch (error) {
+        res.status(500).json({ message: "❌ Error al obtener el total pagado", error: error.message });
+    }
+});
+
+// pending invoices with clients
+
+app.get('/report/pending-invoices', async (req, res) => {
+    try {
+        const [rows] = await pool.query(`
+            SELECT 
+                i.id_invoice,
+                u.name_user,
+                t.id_transaction,
+                t.transaction_date,
+                i.invoice_amount,
+                i.amount_paid,
+                (i.invoice_amount - i.amount_paid) AS pending_amount
+            FROM invoice i
+            INNER JOIN transactions t ON i.id_transaction = t.id_transaction
+            INNER JOIN users u ON t.id_user = u.id_user
+            WHERE i.amount_paid < i.invoice_amount
+        `);
+        res.json(rows);
+    } catch (error) {
+        res.status(500).json({ message: "❌ Error al obtener facturas pendientes", error: error.message });
+    }
+});
+
+
+// transactions by platform
+
+app.get('/report/platform-transactions/:platform', async (req, res) => {
+    const { platform } = req.params;
+    try {
+        const [rows] = await pool.query(`
+            SELECT 
+                t.id_transaction,
+                t.platform_name,
+                t.transaction_date,
+                t.amount,
+                u.name_user,
+                i.id_invoice,
+                i.invoice_amount,
+                i.amount_paid
+            FROM transactions t
+            INNER JOIN users u ON t.id_user = u.id_user
+            LEFT JOIN invoice i ON t.id_transaction = i.id_transaction
+            WHERE t.platform_name = ?
+        `, [platform]);
+        res.json(rows);
+    } catch (error) {
+        res.status(500).json({ message: "❌ Error al obtener transacciones por plataforma", error: error.message });
+    }
+});
+
+
+
 /* ===============================
    INICIO SERVIDOR
 ================================*/

@@ -237,6 +237,53 @@
 					}
 				}
 			]
+		},
+		{
+			"name": "REPORTS",
+			"item": [
+				{
+					"name": "Total pagado por cliente",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/report/total-paid",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "3000",
+							"path": ["report", "total-paid"]
+						}
+					}
+				},
+				{
+					"name": "Facturas pendientes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/report/pending-invoices",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "3000",
+							"path": ["report", "pending-invoices"]
+						}
+					}
+				},
+				{
+					"name": "Transacciones por plataforma",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/report/platform-transactions/Nequi",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "3000",
+							"path": ["report", "platform-transactions", "Nequi"]
+						}
+					}
+				}
+			]
 		}
 	]
 }

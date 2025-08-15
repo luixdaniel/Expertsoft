@@ -24,7 +24,7 @@ export async function loadInvoicesToDatabase() {
             .on('end', async () => {
                 try {
                     const sql = `
-                        INSERT INTO ainvoice 
+                        INSERT INTO invoice 
                         (id_invoice, id_transaction, invoice_period, invoice_amount, amount_paid) 
                         VALUES ?
                     `;
